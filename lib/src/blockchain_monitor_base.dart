@@ -13,10 +13,10 @@ class Monitor {
 
   factory Monitor.defaults([Logger logger]) {
     return Monitor([
-      Blockbook(),
-      Blockchair(),
-      Blockcypher(),
-      BlockchainInfo(),
+      Blockbook(logger),
+      Blockchair(logger),
+      Blockcypher(logger),
+      BlockchainInfo(logger),
     ]);
   }
 
