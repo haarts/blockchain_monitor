@@ -14,6 +14,15 @@ abstract class Adapter {
   Stream<Transaction> transactions(String address);
 }
 
+class AdapterExpection implements Exception {
+  AdapterExpection(this.name, this.reason);
+  final String name;
+  final String reason;
+
+  @override
+  String toString() => 'An Exception occured in the $name adapter: $reason';
+}
+
 Stream<int> longPollConfirmations(
   Future<int> Function() txHeight,
   Future<int> Function() currentHeight, [

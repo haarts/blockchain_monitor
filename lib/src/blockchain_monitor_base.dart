@@ -11,9 +11,10 @@ class Monitor {
 
   List<Adapter> _adapters;
 
+  // TODO: pass logger onward
   factory Monitor.defaults([Logger logger]) {
     return Monitor([
-      Blockbook(logger),
+      Blockbook.defaults(),
       Blockchair(logger),
       Blockcypher(logger),
       BlockchainInfo(logger),
