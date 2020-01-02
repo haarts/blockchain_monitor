@@ -48,5 +48,5 @@ void main() {
     monitor.confirmations('some-txhash').listen(expectAsync1((confirmations) {
       expect(confirmations, 0);
     }, count: 1));
-  });
+  }, skip: 'this is broken, I thought I was testing RedundantStream here but I am not');
 }
