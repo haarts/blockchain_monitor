@@ -13,3 +13,31 @@ abstract class Adapter {
 
   Stream<Transaction> transactions(String address);
 }
+
+Stream<int> longPollConfirmations(
+  Future<int> Function() txHeight,
+  Future<int> Function() currentHeight, [
+  Duration interval,
+]) {
+  return _longPoll(
+    txHeight,
+    currentHeight,
+    interval,
+  ).distinct();
+}
+
+Stream<int> _longPoll(
+  Future<int> Function() txHeight,
+  Future<int> Function() currentHeight, [
+  Duration interval,
+]) async* {
+  while (true) {
+    var tx = await txHeight();
+    if (tx == 0) {
+      yield 0;
+    } else {
+      yield await currentHeight() - tx + 1;
+    }
+    await Future.delayed(interval ?? const Duration(seconds: 60));
+  }
+}
