@@ -1,7 +1,9 @@
+import 'package:logger/logger.dart';
+
 import 'redundant_stream.dart';
-import 'adapter.dart';
 import 'block.dart';
 import 'transaction.dart';
+import 'adapters/adapter.dart';
 
 /// Instantiate this class to obtain a robust blockchain monitor.
 class Monitor {
@@ -9,8 +11,13 @@ class Monitor {
 
   List<Adapter> _adapters;
 
-  factory Monitor.defaults() {
-    return Monitor([]);
+  factory Monitor.defaults([Logger logger]) {
+    return Monitor([
+      Blockbook(),
+      Blockchair(),
+      Blockcypher(),
+      BlockchainInfo(),
+    ]);
   }
 
   Stream<Transaction> address(String address) {
