@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:blockbook/blockbook.dart' as blockbook;
 import 'package:logger/logger.dart';
 import 'package:test/test.dart';
@@ -16,27 +17,52 @@ void main() {
     server.shutdown();
   });
 
-  test('return confirmations', () async {
-    server
-      ..enqueue(body: '{"blockHeight": 100}')
-      ..enqueue(body: '{"blockbook": {"bestHeight": 100}}');
+  group('transactions()', () {
+    test('', () async {
+      var prefix = Directory.current.path.endsWith('test') ? '' : 'test/';
+      var subscriptionMessage = '{"id":"0","data":{"subscribed":true}}';
+      var tx = File('${prefix}files/ws_subscribeAddresses.json').readAsStringSync();
+      server.messageGenerator = (sink) async {
+        await Future.delayed(
+            Duration(seconds: 1), () => sink.add(subscriptionMessage));
+        await Future.delayed(Duration(seconds: 1), () => sink.add(tx));
+      };
 
-    var monitor = Blockbook(Logger(), blockbook.Blockbook(server.url, ''));
+      var client =
+          blockbook.Blockbook('', 'ws://${server.host}:${server.port}/ws');
 
-    monitor.confirmations('some-hash').listen(expectAsync1((confirmations) {
-      expect(confirmations, 1);
-    }));
+      await Blockbook(Logger(), client)
+          .transactions('3MSy6m8gqSjJ3maAXT2d2XbjN1Z85h8R5E')
+          .listen(expectAsync1((transaction) {
+        print(transaction);
+        expect(transaction.txHash, 'b3064c23e45afe710fae26e5dff0bad060f878e9ab744f040cbaf50517617c12');
+      }));
+    });
   });
 
-  test('throws an exception when Blockbook returns one', () async {
-    server
-      ..enqueue(body: '{"error": 100}')
-      ..enqueue(body: '{"blockbook": {"bestHeight": 100}}');
+  group('confirmations()', () {
+    test('return confirmations', () async {
+      server
+        ..enqueue(body: '{"blockHeight": 100}')
+        ..enqueue(body: '{"blockbook": {"bestHeight": 100}}');
 
-    var monitor = Blockbook(Logger(), blockbook.Blockbook(server.url, ''));
-    expect(
-      monitor.confirmations('some-hash'),
-      emitsError(TypeMatcher<AdapterExpection>()),
-    );
+      var monitor = Blockbook(Logger(), blockbook.Blockbook(server.url, ''));
+
+      monitor.confirmations('some-hash').listen(expectAsync1((confirmations) {
+        expect(confirmations, 1);
+      }));
+    });
+
+    test('throws an exception when Blockbook returns one', () async {
+      server
+        ..enqueue(body: '{"error": "some reason"}')
+        ..enqueue(body: '{"blockbook": {"bestHeight": 100}}');
+
+      var monitor = Blockbook(Logger(), blockbook.Blockbook(server.url, ''));
+      expect(
+        monitor.confirmations('some-hash'),
+        emitsError(TypeMatcher<AdapterException>()),
+      );
+    });
   });
 }

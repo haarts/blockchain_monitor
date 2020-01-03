@@ -19,6 +19,6 @@ class Blockchair extends Adapter {
 
   @override
   Stream<Transaction> transactions(address) async* {
-    yield Transaction(inputs: [{'address': 'some-address'}]);
+    yield Transaction();
   }
 }

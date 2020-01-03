@@ -1,5 +1,51 @@
+import 'dart:convert';
+
 class Transaction {
   Transaction({this.inputs});
 
-  List<Map<String, dynamic>> inputs;
+  String txHash;
+  int blockHeight;
+  List<Input> inputs;
+  List<Output> outputs;
+
+  bool get isRBF => _extractLowestSequence() < 1;
+  int _extractLowestSequence() => 1;
+
+  @override
+  String toString() => json.encode(toJson());
+
+  Map<String, dynamic> toJson() => {
+        'txHash': txHash,
+        'blockHeight': blockHeight,
+        'inputs': inputs,
+        'outputs': outputs,
+      };
+}
+
+class Input {
+  String txHash;
+  int sequence;
+  int value;
+
+  @override
+  String toString() => json.encode(toJson());
+
+  Map<String, dynamic> toJson() => {
+        'txHash': txHash,
+        'sequence': sequence,
+        'value': value,
+      };
+}
+
+class Output {
+  int value;
+  String address;
+
+  @override
+  String toString() => json.encode(toJson());
+
+  Map<String, dynamic> toJson() => {
+        'value': value,
+        'address': address,
+      };
 }

@@ -39,10 +39,38 @@ class Blockbook extends Adapter {
   }
 
   @override
-  Stream<Transaction> transactions(address) async* {
-    yield Transaction(inputs: [
-      {'address': 'some-address'}
-    ]);
+  Stream<Transaction> transactions(address) {
+    // skip(1) ignores the subscription success message
+    // TODO: add retryStream
+    return _inner
+        .subscribeAddresses([address])
+        .skip(1)
+        .map<Transaction>((tx) => _transactionFromJSON(tx['data']['tx']))
+        .handleError((e, s) => print('$e,$s'));
+  }
+
+  Transaction _transactionFromJSON(Map<String, dynamic> response) {
+    return Transaction()
+      ..txHash = response['txid']
+      ..blockHeight = response['blockHeight']
+      ..inputs =
+          response['vin'].map<Input>((input) => _inputFromJSON(input)).toList()
+      ..outputs = response['vout']
+          .map<Output>((output) => _outputFromJSON(output))
+          .toList();
+  }
+
+  Input _inputFromJSON(Map<String, dynamic> response) {
+    return Input()
+      ..txHash = response['txid']
+      ..sequence = response['sequence']
+      ..value = response['value'];
+  }
+
+  Output _outputFromJSON(Map<String, dynamic> response) {
+    return Output()
+      ..address = response['addresses'][0]
+      ..value = response['value'];
   }
 
   Future<int> _bestHeight() async {

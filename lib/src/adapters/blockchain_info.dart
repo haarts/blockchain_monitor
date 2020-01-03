@@ -21,6 +21,6 @@ class BlockchainInfo extends Adapter {
 
   @override
   Stream<Transaction> transactions(address) async* {
-    yield Transaction(inputs: [{'address': 'some-address'}]);
+    yield Transaction();
   }
 }
