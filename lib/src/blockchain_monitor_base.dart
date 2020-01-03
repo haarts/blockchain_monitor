@@ -16,7 +16,7 @@ class Monitor {
     return Monitor([
       Blockbook.defaults(),
       Blockchair.defaults(),
-      Blockcypher(logger),
+      Blockcypher.defaults(),
       BlockchainInfo(logger),
     ]);
   }
