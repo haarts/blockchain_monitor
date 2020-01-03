@@ -18,10 +18,11 @@ void main() {
   });
 
   group('transactions()', () {
-    test('', () async {
+    test('happy path', () async {
       var prefix = Directory.current.path.endsWith('test') ? '' : 'test/';
       var subscriptionMessage = '{"id":"0","data":{"subscribed":true}}';
-      var tx = File('${prefix}files/ws_subscribeAddresses.json').readAsStringSync();
+      var tx =
+          File('${prefix}files/ws_subscribeAddresses.json').readAsStringSync();
       server.messageGenerator = (sink) async {
         await Future.delayed(
             Duration(seconds: 1), () => sink.add(subscriptionMessage));
@@ -34,8 +35,8 @@ void main() {
       await Blockbook(Logger(), client)
           .transactions('3MSy6m8gqSjJ3maAXT2d2XbjN1Z85h8R5E')
           .listen(expectAsync1((transaction) {
-        print(transaction);
-        expect(transaction.txHash, 'b3064c23e45afe710fae26e5dff0bad060f878e9ab744f040cbaf50517617c12');
+        expect(transaction.txHash,
+            'b3064c23e45afe710fae26e5dff0bad060f878e9ab744f040cbaf50517617c12');
       }));
     });
   });
