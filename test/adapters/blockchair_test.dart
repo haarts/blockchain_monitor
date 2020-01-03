@@ -38,8 +38,7 @@ void main() {
       server
         ..enqueue( body: 'some garbage')
         ..enqueue( body: 'some garbage')
-        ..enqueue( body: 'some garbage')
-        ..enqueue(body: '{"data": {"blocks": 100}}');
+        ..enqueue( body: 'some garbage');
 
       var monitor = Blockchair(
         Logger(),
