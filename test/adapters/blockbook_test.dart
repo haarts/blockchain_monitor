@@ -17,6 +17,24 @@ void main() {
     server.shutdown();
   });
 
+  group('blocks()', () {
+    test('happy path', () async {
+      var subscriptionSuccess = '{"id":"0","data":{"subscribed":true}}';
+      var newBlock =
+          '{"id":"1","data":{"height":611099,"hash":"00000000000000000010657f651f9a65814a3ba731ea997304ebcd6d9cf150eb"}}';
+      server.messageGenerator = (sink) {
+        sink.add(subscriptionSuccess);
+        sink.add(newBlock);
+      };
+      var client =
+          blockbook.Blockbook('', 'ws://${server.host}:${server.port}/ws');
+
+      await Blockbook(Logger(), client).blocks().listen(expectAsync1((block) {
+        expect(block.height, 611099);
+      }));
+    });
+  });
+
   group('transactions()', () {
     test('happy path', () async {
       var prefix = Directory.current.path.endsWith('test') ? '' : 'test/';

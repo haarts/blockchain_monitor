@@ -21,13 +21,18 @@ class Blockbook extends Adapter {
 
   static const String _defaultUrl = 'https://btc1.trezor.io';
   static const String _defaultWebsocketUrl = 'wss://btc1.trezor.io/websocket';
+  static const String _name = 'blockbook';
 
   Logger _logger;
   blockbook.Blockbook _inner;
 
   @override
-  Stream<Block> blocks() async* {
-    yield Block(height: 100);
+  Stream<Block> blocks() {
+    return _inner
+        .subscribeNewBlock()
+        .skip(1)
+        .map<Block>((block) => _blockFromJSON(block['data']))
+        .handleError((e, s) => print('$e,$s'));
   }
 
   @override
@@ -48,6 +53,10 @@ class Blockbook extends Adapter {
         .map<Transaction>((tx) => _transactionFromJSON(tx['data']['tx']))
         .handleError((e, s) => print('$e,$s'));
   }
+
+  Block _blockFromJSON(Map<String, dynamic> response) => Block()
+    ..height = response['height']
+    ..hash = response['hash'];
 
   Transaction _transactionFromJSON(Map<String, dynamic> response) {
     return Transaction()
