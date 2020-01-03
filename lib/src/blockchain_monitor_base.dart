@@ -15,7 +15,7 @@ class Monitor {
   factory Monitor.defaults([Logger logger]) {
     return Monitor([
       Blockbook.defaults(),
-      Blockchair(logger),
+      Blockchair.defaults(),
       Blockcypher(logger),
       BlockchainInfo(logger),
     ]);
