@@ -14,8 +14,8 @@ abstract class Adapter {
   Stream<Transaction> transactions(String address);
 }
 
-class AdapterExpection implements Exception {
-  AdapterExpection(this.name, this.reason);
+class AdapterException implements Exception {
+  AdapterException(this.name, this.reason);
   final String name;
   final String reason;
 

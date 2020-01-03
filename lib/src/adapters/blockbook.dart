@@ -48,7 +48,7 @@ class Blockbook extends Adapter {
   Future<int> _bestHeight() async {
     var response = await retry(_inner.status);
     if (response.containsKey('error')) {
-      throw AdapterExpection('Blockbook', response.toString());
+      throw AdapterException('Blockbook', response.toString());
     }
 
     return response['blockbook']['bestHeight'];
@@ -57,7 +57,7 @@ class Blockbook extends Adapter {
   Future<int> _txHeight(String txHash) async {
     var response = await retry(() => _inner.transaction(txHash));
     if (response.containsKey('error')) {
-      throw AdapterExpection('Blockbook', response.toString());
+      throw AdapterException('Blockbook', response.toString());
     }
 
     return response['blockHeight'] ?? 0;
