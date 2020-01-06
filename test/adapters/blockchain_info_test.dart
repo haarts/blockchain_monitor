@@ -11,6 +11,10 @@ class MockClient extends Client {
   @override
   Future<Map<String, dynamic>> getTransaction(String txHash) =>
       Future.value({'block_height': 100});
+
+  @override
+  Stream<String> newBlocks() =>
+      Stream.value('{"x": {"blockIndex":100, "hash": "some-hash"}}');
 }
 
 void main() {
@@ -26,5 +30,12 @@ void main() {
     });
 
     test('failure modes', () {}, skip: 'TODO');
+  });
+
+  group('blocks()', () {
+    test('stream blocks', () {
+      var monitor = BlockchainInfo(null, MockClient(),);
+      expect(monitor.blocks(), emitsInOrder([TypeMatcher<Block>()]));
+    });
   });
 }

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:blockchain_info/blockchain_info.dart';
 import 'package:logger/logger.dart';
 import 'package:retry/retry.dart';
@@ -22,9 +23,12 @@ class BlockchainInfo extends Adapter {
   final Logger _logger;
   final Client _inner;
 
+  // TODO add retryStream
   @override
-  Stream<Block> blocks() async* {
-    yield Block(height: 100);
+  Stream<Block> blocks() {
+    return _inner.newBlocks().map(json.decode).map((block) => Block()
+      ..height = block['x']['blockIndex']
+      ..hash = block['x']['hash']);
   }
 
   @override
