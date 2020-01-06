@@ -36,9 +36,9 @@ void main() {
 
     test('throws an exception when Blockchair returns one', () async {
       server
-        ..enqueue( body: 'some garbage')
-        ..enqueue( body: 'some garbage')
-        ..enqueue( body: 'some garbage');
+        ..enqueue(body: 'some garbage')
+        ..enqueue(body: 'some garbage')
+        ..enqueue(body: 'some garbage');
 
       var monitor = Blockchair(
         Logger(),

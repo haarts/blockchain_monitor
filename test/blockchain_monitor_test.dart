@@ -14,7 +14,9 @@ class TestAdapter extends Adapter {
 
   @override
   Stream<Transaction> transactions(address) async* {
-    yield Transaction(inputs: [{'address': 'some-address'}]);
+    yield Transaction(inputs: [
+      {'address': 'some-address'}
+    ]);
   }
 }
 
@@ -46,7 +48,9 @@ void main() {
   test('de-duplicate events', () async {
     var monitor = Monitor([TestAdapter(), TestAdapter()]);
     monitor.confirmations('some-txhash').listen(expectAsync1((confirmations) {
-      expect(confirmations, 0);
-    }, count: 1));
-  }, skip: 'this is broken, I thought I was testing RedundantStream here but I am not');
+          expect(confirmations, 0);
+        }, count: 1));
+  },
+      skip:
+          'this is broken, I thought I was testing RedundantStream here but I am not');
 }
