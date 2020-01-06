@@ -15,6 +15,10 @@ class MockClient extends Client {
   @override
   Stream<String> newBlocks() =>
       Stream.value('{"x": {"blockIndex":100, "hash": "some-hash"}}');
+
+  @override
+  Stream<String> transactionsForAddress(String address) => Stream.value(
+      '{"x": {"hash": "some-hash", "inputs": [{"sequence": 1234, "prev_out": {"value": 1234}}], "out": [{"addr": "some-address", "value": 123}]}}');
 }
 
 void main() {
@@ -34,8 +38,22 @@ void main() {
 
   group('blocks()', () {
     test('stream blocks', () {
-      var monitor = BlockchainInfo(null, MockClient(),);
+      var monitor = BlockchainInfo(
+        null,
+        MockClient(),
+      );
       expect(monitor.blocks(), emitsInOrder([TypeMatcher<Block>()]));
+    });
+  });
+
+  group('transactions()', () {
+    test('stream', () async {
+      var monitor = BlockchainInfo(
+        null,
+        MockClient(),
+      );
+      expect(monitor.transactions('some address'),
+          emits(TypeMatcher<Transaction>()));
     });
   });
 }

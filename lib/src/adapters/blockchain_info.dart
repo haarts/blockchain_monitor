@@ -39,9 +39,39 @@ class BlockchainInfo extends Adapter {
     );
   }
 
+  // TODO add retryStream
+  // TODO add exception handling
   @override
-  Stream<Transaction> transactions(address) async* {
-    yield Transaction();
+  Stream<Transaction> transactions(address) {
+    return _inner
+        .transactionsForAddress(address)
+        .map(json.decode)
+        .asyncMap((tx) async {
+      print(tx);
+      return Transaction()
+        ..txHash = tx['x']['hash']
+        ..blockHeight =
+            (await _inner.getTransaction(tx['x']['hash']))['block_height']
+        ..inputs = tx['x']['inputs']
+            .map<Input>((input) => _inputFromJSON(input))
+            .toList()
+        ..outputs = tx['x']['out']
+            .map<Output>((output) => _outputFromJSON(output))
+            .toList();
+    }).handleError((e, s) => print('$e,$s'));
+  }
+
+  Output _outputFromJSON(Map<String, dynamic> output) {
+    return Output()
+      ..address = output['addr']
+      ..value = output['value'];
+  }
+
+  // TODO: fix missing txHash (should it be a txHash at all?)
+  Input _inputFromJSON(Map<String, dynamic> input) {
+    return Input()
+      ..sequence = input['sequence']
+      ..value = input['prev_out']['value'];
   }
 
   Future<int> _bestHeight() async {
