@@ -24,5 +24,7 @@ void main() {
         expect(confirmations, 1);
       }));
     });
+
+    test('failure modes', () {}, skip: 'TODO');
   });
 }
