@@ -43,6 +43,7 @@ class Blockbook extends Adapter {
     );
   }
 
+  // TODO add retryStream
   @override
   Stream<Transaction> transactions(address) {
     // skip(1) ignores the subscription success message
