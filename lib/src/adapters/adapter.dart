@@ -35,6 +35,7 @@ Stream<int> longPollConfirmations(
   ).distinct();
 }
 
+// TODO: txHeight doesn't change once it is mined and could be cached
 Stream<int> _longPoll(
   Future<int> Function() txHeight,
   Future<int> Function() currentHeight, [
