@@ -47,7 +47,6 @@ class BlockchainInfo extends Adapter {
         .transactionsForAddress(address)
         .map(json.decode)
         .asyncMap((tx) async {
-      print(tx);
       return Transaction()
         ..txHash = tx['x']['hash']
         ..blockHeight =
