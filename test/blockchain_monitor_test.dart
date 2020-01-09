@@ -14,9 +14,7 @@ class TestAdapter extends Adapter {
 
   @override
   Stream<Transaction> transactions(address) async* {
-    yield Transaction(inputs: [
-      {'address': 'some-address'}
-    ]);
+    yield Transaction()..outputs = [Output()..address = 'some-address'];
   }
 }
 
@@ -29,7 +27,7 @@ void main() {
 
   test('Monitor an address for transactions', () {
     monitor.address('some-address').listen(expectAsync1((tx) {
-      expect(tx.inputs[0]['address'], 'some-address');
+      expect(tx.outputs[0].address, 'some-address');
     }));
   });
 
