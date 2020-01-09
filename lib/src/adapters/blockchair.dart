@@ -36,7 +36,50 @@ class Blockchair extends Adapter {
 
   @override
   Stream<Transaction> transactions(address) async* {
-    yield Transaction();
+    //ignore: omit_local_variable_types
+    Set<String> seenTxHashes;
+    while (true) {
+      var info = await retry(() => _inner.address(address));
+      var txs = Set<String>.from(info['data'][address]['transactions']);
+      seenTxHashes ??= txs;
+
+      //ignore: omit_local_variable_types
+      Iterable<Future<Transaction>> transactions =
+          txs.difference(seenTxHashes).map((tx) {
+        seenTxHashes.add(tx);
+        return tx;
+      }).map((tx) => _newTransaction(tx));
+
+      Iterable<Transaction> lists = await Future.wait(transactions);
+      for (var l in lists) {
+        yield l;
+      }
+
+      await Future.delayed(const Duration(seconds: 5));
+    }
+  }
+
+  Future<Transaction> _newTransaction(String txHash) async {
+    var tx = await retry(() => _inner.transaction(txHash));
+
+    return Transaction()
+      ..txHash = txHash
+      ..blockHeight = tx['data'][txHash]['transaction']['block_id']
+      ..inputs = _inputsFromJson(tx['data'][txHash]['inputs']).toList()
+      ..outputs = _outputsFromJson(tx['data'][txHash]['outputs']).toList();
+  }
+
+  Iterable<Input> _inputsFromJson(List inputs) {
+    return inputs.map<Input>((input) => Input()
+      ..txHash = input['spending_transaction_hash']
+      ..sequence = input['spending_sequence']
+      ..value = input['value']);
+  }
+
+  Iterable<Output> _outputsFromJson(List outputs) {
+    return outputs.map<Output>((output) => Output()
+      ..address = output['recipient']
+      ..value = output['value']);
   }
 
   Future<int> _bestHeight() async {
