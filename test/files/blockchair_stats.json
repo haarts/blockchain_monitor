@@ -1,0 +1,67 @@
+{
+  "data": {
+    "blocks": 612054,
+    "transactions": 491615575,
+    "outputs": 1308643976,
+    "circulation": 1815064604497237,
+    "blocks_24h": 143,
+    "transactions_24h": 322461,
+    "difficulty": 13798783827516,
+    "volume_24h": 129301586202079,
+    "mempool_transactions": 13396,
+    "mempool_size": 10000640,
+    "mempool_tps": 3.3333333333333335,
+    "mempool_total_fee_usd": 7786.9601,
+    "best_block_height": 612053,
+    "best_block_hash": "0000000000000000000be248f3caf0e0f32577dd1d7b1377a7afb451ade490ca",
+    "best_block_time": "2020-01-09 14:57:27",
+    "blockchain_size": 257377378710,
+    "average_transaction_fee_24h": 9377,
+    "inflation_24h": 178750000000,
+    "median_transaction_fee_24h": 4584,
+    "cdd_24h": 8218267.716970074,
+    "largest_transaction_24h": {
+      "hash": "a3e0e87055e6650ce8f49e57f16669e618a5daf7980ddae009568ce5a27982a3",
+      "value_usd": 434792032
+    },
+    "nodes": 9032,
+    "hashrate_24h": "98121399443302855822",
+    "inflation_usd_24h": 14131081.25,
+    "average_transaction_fee_usd_24h": 0.741323822859493,
+    "median_transaction_fee_usd_24h": 0.36238812000000004,
+    "market_price_usd": 7905.5,
+    "market_price_btc": 1,
+    "market_price_usd_change_24h_percentage": -4.2158,
+    "market_cap_usd": 143844260383,
+    "market_dominance_percentage": 68.87,
+    "next_retarget_time_estimate": "2020-01-14 20:03:41",
+    "next_difficulty_estimate": 14039949171422,
+    "countdowns": [
+      {
+        "event": "Reward halving",
+        "time_left": 10767000
+      }
+    ],
+    "suggested_transaction_fee_per_byte_sat": 28
+  },
+  "context": {
+    "code": 200,
+    "source": "A",
+    "time": 0.20521306991577148,
+    "state": 612053,
+    "cache": {
+      "live": false,
+      "duration": "Ignore",
+      "since": "2020-01-09 15:33:19",
+      "until": "2021-01-08 15:33:19",
+      "time": 5.9604644775390625e-06
+    },
+    "api": {
+      "version": "2.0.40b",
+      "last_major_update": "2019-07-19 18:07:19",
+      "next_major_update": null,
+      "documentation": "https://blockchair.com/api/docs",
+      "notice": "Beginning July 19th, 2019 all applications using Blockchair API on a constant basis should apply for an API key (mailto:info@blockchair.com)"
+    }
+  }
+}

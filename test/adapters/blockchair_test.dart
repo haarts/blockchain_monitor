@@ -10,8 +10,28 @@ import 'package:blockchain_monitor/blockchain_monitor.dart';
 class MockBlockchair extends Mock implements blockchair.Blockchair {}
 
 void main() {
+  var prefix = Directory.current.path.endsWith('test') ? '' : 'test/';
+
   group('blocks()', () {
-    test('stream blocks', () async {});
+    test('stream blocks', () async {
+      var mock = MockBlockchair();
+      when(mock.stats()).thenAnswer(
+        (_) => Future.value(json.decode(
+            File('${prefix}files/blockchair_stats.json').readAsStringSync())),
+      );
+      when(mock.block(any)).thenAnswer(
+        (_) => Future.value(json.decode(
+            File('${prefix}files/blockchair_block_612053.json')
+                .readAsStringSync())),
+      );
+      var monitor = Blockchair(
+        null,
+        mock,
+      );
+
+      var firstBlock = await monitor.blocks().first;
+      expect(firstBlock.height, 612053);
+    });
   });
 
   group('transactions()', () {
@@ -20,7 +40,6 @@ void main() {
     test('return tx in which address is recipient', () {}, skip: 'TODO');
 
     test('stream transactions', () async {
-      var prefix = Directory.current.path.endsWith('test') ? '' : 'test/';
       var mock = MockBlockchair();
       var addressResponses = [
         Future<Map<String, dynamic>>.value(

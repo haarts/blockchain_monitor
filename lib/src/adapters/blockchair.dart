@@ -23,7 +23,20 @@ class Blockchair extends Adapter {
 
   @override
   Stream<Block> blocks() async* {
-    yield Block(height: 100);
+    int lastBlockHeight;
+    while (true) {
+      var response = await _inner.stats();
+      if (lastBlockHeight != response['data']['blocks']) {
+        lastBlockHeight = response['data']['blocks'] - 1;
+        var blockResponse = (await _inner.block(lastBlockHeight))['data']
+            ['$lastBlockHeight']['block'];
+        yield Block()
+          ..hash = blockResponse['hash']
+          ..height = blockResponse['id'];
+
+        await Future.delayed(const Duration(seconds: 5));
+      }
+    }
   }
 
   @override
