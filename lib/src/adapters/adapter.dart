@@ -7,10 +7,13 @@ export 'blockcypher.dart';
 export 'blockchain_info.dart';
 
 abstract class Adapter {
+  /// Stream of blocks as they are mined
   Stream<Block> blocks();
 
+  // Stream of ever increasing number of confirmations for a particular tx
   Stream<int> confirmations(String txHash);
 
+  // Stream of all transactions involving this address.
   Stream<Transaction> transactions(String address);
 }
 
