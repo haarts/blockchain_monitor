@@ -64,9 +64,12 @@ class Blockcypher extends Adapter {
 
   @override
   Stream<Block> blocks() {
-    return _inner.newBlocks().map(json.decode).map((block) => Block()
-      ..hash = block['hash']
-      ..height = block['height']);
+    return _inner.newBlocks().map(json.decode).map(
+          (block) => Block(
+            hash: block['hash'],
+            height: block['height'],
+          ),
+        );
   }
 
   Input _inputFromJson(Map<String, dynamic> input) {

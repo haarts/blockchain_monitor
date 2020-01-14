@@ -30,9 +30,10 @@ class Blockchair extends Adapter {
         lastBlockHeight = response['data']['blocks'] - 1;
         var blockResponse = (await _inner.block(lastBlockHeight))['data']
             ['$lastBlockHeight']['block'];
-        yield Block()
-          ..hash = blockResponse['hash']
-          ..height = blockResponse['id'];
+        yield Block(
+          hash: blockResponse['hash'],
+          height: blockResponse['id'],
+        );
 
         await Future.delayed(const Duration(seconds: 5));
       }

@@ -7,7 +7,7 @@ class AllStreamsFailed implements Exception {
   final int amount;
 
   @override
-  String toString() => "AllStreamsFailed(originalNrOfStreams: $amount)";
+  String toString() => 'AllStreamsFailed(originalNrOfStreams: $amount)';
 }
 
 class RedundantStream<T> {
@@ -42,6 +42,7 @@ class _UniqueSink<T> implements EventSink<T> {
   final int memory;
   final int _head;
 
+  @override
   void add(T data) {
     // add it if we haven't seen it yet
     if (!_seen.contains(data)) {

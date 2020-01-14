@@ -56,9 +56,10 @@ class Blockbook extends Adapter {
         .handleError((e, s) => print('$e,$s'));
   }
 
-  Block _blockFromJSON(Map<String, dynamic> response) => Block()
-    ..height = response['height']
-    ..hash = response['hash'];
+  Block _blockFromJSON(Map<String, dynamic> response) => Block(
+        height: response['height'],
+        hash: response['hash'],
+      );
 
   Transaction _transactionFromJSON(Map<String, dynamic> response) {
     return Transaction()

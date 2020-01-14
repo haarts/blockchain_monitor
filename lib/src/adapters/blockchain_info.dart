@@ -26,9 +26,12 @@ class BlockchainInfo extends Adapter {
   // TODO add retryStream
   @override
   Stream<Block> blocks() {
-    return _inner.newBlocks().map(json.decode).map((block) => Block()
-      ..height = block['x']['blockIndex']
-      ..hash = block['x']['hash']);
+    return _inner.newBlocks().map(json.decode).map(
+          (block) => Block(
+            height: block['x']['blockIndex'],
+            hash: block['x']['hash'],
+          ),
+        );
   }
 
   @override
