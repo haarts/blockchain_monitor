@@ -45,13 +45,37 @@ class Blockcypher extends Adapter {
   }
 
   @override
-  Stream<Transaction> transactions(String address) async* {
-    yield Transaction();
+  Stream<Transaction> transactions(String address) {
+    return _inner.unconfirmedTransactions(address).map(json.decode).map((tx) {
+      return Transaction()
+        ..txHash = tx['hash']
+        ..blockHeight = 0
+        ..inputs =
+            tx['inputs'].map<Input>((input) => _inputFromJson(input)).toList()
+        ..outputs = tx['outputs']
+            .map<Output>((output) => _outputFromJson(output))
+            .toList();
+    });
   }
 
   @override
-  Stream<Block> blocks() async* {
-    yield Block(height: 100);
+  Stream<Block> blocks() {
+    return _inner.newBlocks().map(json.decode).map((block) => Block()
+      ..hash = block['hash']
+      ..height = block['height']);
+  }
+
+  Input _inputFromJson(Map<String, dynamic> input) {
+    return Input()
+      ..sequence = input['sequence']
+      ..value = input['output_value']
+      ..txHash = input['prev_hash'];
+  }
+
+  Output _outputFromJson(Map<String, dynamic> output) {
+    return Output()
+      ..addresses = output['addresses'].cast<String>()
+      ..value = output['value'];
   }
 
   Future<int> _txHeight(String txHash) async {
