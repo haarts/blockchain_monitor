@@ -79,7 +79,7 @@ class Blockbook extends Adapter {
 
   Output _outputFromJSON(Map<String, dynamic> response) {
     return Output()
-      ..address = response['addresses'][0]
+      ..addresses = response['addresses'].cast<String>()
       ..value = response['value'];
   }
 

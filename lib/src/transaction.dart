@@ -39,13 +39,13 @@ class Input {
 
 class Output {
   int value;
-  String address;
+  List<String> addresses;
 
   @override
   String toString() => json.encode(toJson());
 
   Map<String, dynamic> toJson() => {
         'value': value,
-        'address': address,
+        'addresses': addresses,
       };
 }

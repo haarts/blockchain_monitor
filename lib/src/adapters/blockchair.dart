@@ -91,7 +91,7 @@ class Blockchair extends Adapter {
 
   Iterable<Output> _outputsFromJson(List outputs) {
     return outputs.map<Output>((output) => Output()
-      ..address = output['recipient']
+      ..addresses = [output['recipient']]
       ..value = output['value']);
   }
 

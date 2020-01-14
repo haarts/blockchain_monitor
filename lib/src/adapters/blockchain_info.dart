@@ -62,7 +62,7 @@ class BlockchainInfo extends Adapter {
 
   Output _outputFromJSON(Map<String, dynamic> output) {
     return Output()
-      ..address = output['addr']
+      ..addresses = [output['addr']]
       ..value = output['value'];
   }
 
