@@ -36,6 +36,8 @@ class Blockcypher extends Adapter {
   Logger _logger;
   blockcypher.Client _inner;
 
+  // TODO: This can be better right?
+  // With tx-confirmation https://www.blockcypher.com/dev/bitcoin/#events-and-hooks
   @override
   Stream<int> confirmations(String txHash) {
     return longPollConfirmations(
@@ -44,6 +46,8 @@ class Blockcypher extends Adapter {
     );
   }
 
+  // TODO: add retry stream
+  // TODO: handle exception
   @override
   Stream<Transaction> transactions(String address) {
     return _inner.unconfirmedTransactions(address).map(json.decode).map((tx) {

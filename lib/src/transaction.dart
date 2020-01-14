@@ -3,6 +3,7 @@ import 'dart:convert';
 class Transaction {
   Transaction({this.inputs});
 
+  // TODO: rename to 'hash' b/c what else could it be?
   String txHash;
   int blockHeight;
   List<Input> inputs;
