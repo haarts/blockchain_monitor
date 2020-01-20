@@ -9,7 +9,7 @@ void main() {
       longPollConfirmations(
         () async => 1,
         () async => calls++,
-        const Duration(milliseconds: 1),
+        interval: const Duration(milliseconds: 1),
       ),
       emitsInOrder([
         0,

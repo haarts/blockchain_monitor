@@ -28,9 +28,9 @@ class AdapterException implements Exception {
 
 Stream<int> longPollConfirmations(
   Future<int> Function() txHeight,
-  Future<int> Function() currentHeight, [
-  Duration interval,
-]) {
+  Future<int> Function() currentHeight, {
+  Duration interval = const Duration(seconds: 60),
+}) {
   return _longPoll(
     txHeight,
     currentHeight,
@@ -51,6 +51,6 @@ Stream<int> _longPoll(
     } else {
       yield await currentHeight() - tx + 1;
     }
-    await Future.delayed(interval ?? const Duration(seconds: 60));
+    await Future.delayed(interval);
   }
 }
