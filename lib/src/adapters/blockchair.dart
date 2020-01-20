@@ -26,7 +26,7 @@ class Blockchair extends Adapter {
     int lastBlockHeight;
     while (true) {
       var response = await _inner.stats();
-      if (lastBlockHeight != response['data']['blocks']) {
+      if (lastBlockHeight != response['data']['blocks'] - 1) {
         lastBlockHeight = response['data']['blocks'] - 1;
         var blockResponse = (await _inner.block(lastBlockHeight))['data']
             ['$lastBlockHeight']['block'];
