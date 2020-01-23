@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:blockchair/blockchair.dart' as blockchair;
 import 'package:logger/logger.dart';
 import 'package:retry/retry.dart';
@@ -9,14 +10,15 @@ import '../transaction.dart';
 class Blockchair extends Adapter {
   Blockchair(this._logger, this._inner);
 
-  factory Blockchair.defaults() {
+  factory Blockchair.defaults([Logger logger]) {
     return Blockchair(
-      Logger(),
+      logger,
       blockchair.Blockchair(_defaultUrl),
     );
   }
 
   static const String _defaultUrl = 'https://api.blockchair.com/bitcoin/';
+  static const String _name = 'Blockchair';
 
   Logger _logger;
   blockchair.Blockchair _inner;
@@ -30,9 +32,20 @@ class Blockchair extends Adapter {
         lastBlockHeight = response['data']['blocks'] - 1;
         var blockResponse = (await _inner.block(lastBlockHeight))['data']
             ['$lastBlockHeight']['block'];
+
+        var hash = blockResponse['hash'];
+        var height = blockResponse['id'];
+
+        _logger?.v({
+          'msg': 'New block found for $_name',
+          'hash': hash,
+          'height': height,
+          'name': _name,
+        });
+
         yield Block(
-          hash: blockResponse['hash'],
-          height: blockResponse['id'],
+          hash: hash,
+          height: height,
         );
       }
       await Future.delayed(const Duration(seconds: 5));
@@ -44,7 +57,15 @@ class Blockchair extends Adapter {
     return longPollConfirmations(
       () => _txHeight(txHash),
       _bestHeight,
-    );
+    ).map((height) {
+      _logger?.v({
+        'msg': 'New confirmation for $txHash on $_name',
+        'txHash': txHash,
+        'height': height,
+        'name': _name,
+      });
+      return height;
+    });
   }
 
   @override
@@ -56,16 +77,19 @@ class Blockchair extends Adapter {
       var txs = Set<String>.from(info['data'][address]['transactions']);
       seenTxHashes ??= txs;
 
-      //ignore: omit_local_variable_types
-      Iterable<Future<Transaction>> transactions =
-          txs.difference(seenTxHashes).map((tx) {
+      var transactions =
+          await Future.wait(txs.difference(seenTxHashes).map((tx) {
         seenTxHashes.add(tx);
         return tx;
-      }).map((tx) => _newTransaction(tx));
+      }).map((tx) => _newTransaction(tx)));
 
-      Iterable<Transaction> lists = await Future.wait(transactions);
-      for (var l in lists) {
-        yield l;
+      for (var tx in transactions) {
+        _logger?.v({
+          'msg': 'New transaction for $address on $_name',
+          'address': address,
+          'txHash': tx.txHash,
+        });
+        yield tx;
       }
 
       await Future.delayed(const Duration(seconds: 5));

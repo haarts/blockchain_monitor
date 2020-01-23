@@ -42,7 +42,15 @@ class Blockcypher extends Adapter {
     return longPollConfirmations(
       () => _txHeight(txHash),
       _bestHeight,
-    );
+    ).map((height) {
+      _logger?.v({
+        'msg': 'New confirmation for $txHash on $_name',
+        'txHash': txHash,
+        'height': height,
+        'name': _name,
+      });
+      return height;
+    });
   }
 
   // TODO: add retry stream
@@ -50,6 +58,11 @@ class Blockcypher extends Adapter {
   @override
   Stream<Transaction> transactions(String address) {
     return _inner.unconfirmedTransactions(address).map(json.decode).map((tx) {
+      _logger?.v({
+        'msg': 'New transaction for $address on $_name',
+        'address': address,
+        'txHash': tx['hash'],
+      });
       return Transaction()
         ..txHash = tx['hash']
         ..blockHeight = 0
@@ -63,12 +76,22 @@ class Blockcypher extends Adapter {
 
   @override
   Stream<Block> blocks() {
-    return _inner.newBlocks().map(json.decode).map(
-          (block) => Block(
-            hash: block['hash'],
-            height: block['height'],
-          ),
-        );
+    return _inner.newBlocks().map(json.decode).map((block) {
+      var hash = block['hash'];
+      var height = block['height'];
+
+      _logger?.v({
+        'msg': 'New block found for $_name',
+        'hash': hash,
+        'height': height,
+        'name': _name,
+      });
+
+      return Block(
+        hash: hash,
+        height: height,
+      );
+    });
   }
 
   Input _inputFromJson(Map<String, dynamic> input) {

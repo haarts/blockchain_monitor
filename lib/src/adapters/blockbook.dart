@@ -12,9 +12,9 @@ class Blockbook extends Adapter {
     this._inner,
   );
 
-  factory Blockbook.defaults() {
+  factory Blockbook.defaults([Logger logger]) {
     return Blockbook(
-      Logger(),
+      logger,
       blockbook.Blockbook(_defaultUrl, _defaultWebsocketUrl),
     );
   }
@@ -32,7 +32,16 @@ class Blockbook extends Adapter {
         .subscribeNewBlock()
         .skip(1)
         .map<Block>((block) => _blockFromJSON(block['data']))
-        .handleError((e, s) => print('$e,$s'));
+        .map((block) {
+      _logger?.v({
+        'msg': 'New block found for $_name',
+        'hash': block.hash,
+        'height': block.height,
+        'name': _name,
+      });
+
+      return block;
+    }).handleError((e, s) => print('$e,$s'));
   }
 
   @override
@@ -40,7 +49,15 @@ class Blockbook extends Adapter {
     return longPollConfirmations(
       () => _txHeight(txHash),
       _bestHeight,
-    );
+    ).map((height) {
+      _logger?.v({
+        'msg': 'New confirmation for $txHash on $_name',
+        'txHash': txHash,
+        'height': height,
+        'name': _name,
+      });
+      return height;
+    });
   }
 
   // TODO add retryStream
@@ -53,6 +70,15 @@ class Blockbook extends Adapter {
         .subscribeAddresses([address])
         .skip(1)
         .map<Transaction>((tx) => _transactionFromJSON(tx['data']['tx']))
+        .map((tx) {
+          _logger?.v({
+            'msg': 'New transaction for $address on $_name',
+            'address': address,
+            'txHash': tx.txHash,
+          });
+
+          return tx;
+        })
         .handleError((e, s) => print('$e,$s'));
   }
 

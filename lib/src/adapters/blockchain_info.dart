@@ -13,9 +13,9 @@ class BlockchainInfo extends Adapter {
     this._inner,
   );
 
-  factory BlockchainInfo.defaults() {
+  factory BlockchainInfo.defaults([Logger logger]) {
     return BlockchainInfo(
-      Logger(),
+      logger,
       Client(),
     );
   }
@@ -23,15 +23,28 @@ class BlockchainInfo extends Adapter {
   final Logger _logger;
   final Client _inner;
 
+  static const String _name = 'Blockchain.info';
+
   // TODO add retryStream
+  // TODO immediately retrieve current block height upon invocation
   @override
   Stream<Block> blocks() {
-    return _inner.newBlocks().map(json.decode).map(
-          (block) => Block(
-            height: block['x']['blockIndex'],
-            hash: block['x']['hash'],
-          ),
-        );
+    return _inner.newBlocks().map(json.decode).map((block) {
+      var height = block['x']['height'];
+      var hash = block['x']['hash'];
+
+      _logger?.v({
+        'msg': 'New block found for $_name',
+        'hash': hash,
+        'height': height,
+        'name': _name,
+      });
+
+      return Block(
+        height: height,
+        hash: hash,
+      );
+    });
   }
 
   @override
@@ -39,7 +52,15 @@ class BlockchainInfo extends Adapter {
     return longPollConfirmations(
       () => _txHeight(txHash),
       _bestHeight,
-    );
+    ).map((height) {
+      _logger?.v({
+        'msg': 'New confirmation for $txHash on $_name',
+        'txHash': txHash,
+        'height': height,
+        'name': _name,
+      });
+      return height;
+    });
   }
 
   // TODO add retryStream
@@ -50,6 +71,11 @@ class BlockchainInfo extends Adapter {
         .transactionsForAddress(address)
         .map(json.decode)
         .asyncMap((tx) async {
+      _logger?.v({
+        'msg': 'New transaction for $address on $_name',
+        'address': address,
+        'txHash': tx['x']['hash'],
+      });
       return Transaction()
         ..txHash = tx['x']['hash']
         ..blockHeight =
