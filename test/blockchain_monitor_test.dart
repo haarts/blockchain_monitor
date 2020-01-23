@@ -14,7 +14,10 @@ class TestAdapter extends Adapter {
 
   @override
   Stream<Transaction> transactions(address) async* {
-    yield Transaction()..outputs = [Output()..addresses = ['some-address']];
+    yield Transaction()
+      ..outputs = [
+        Output()..addresses = ['some-address']
+      ];
   }
 }
 
