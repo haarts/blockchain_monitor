@@ -54,7 +54,6 @@ class Blockcypher extends Adapter {
   }
 
   // TODO: add retry stream
-  // TODO: handle exception
   @override
   Stream<Transaction> transactions(String address) {
     return _inner.unconfirmedTransactions(address).map(json.decode).map((tx) {
@@ -71,7 +70,7 @@ class Blockcypher extends Adapter {
         ..outputs = tx['outputs']
             .map<Output>((output) => _outputFromJson(output))
             .toList();
-    });
+    }).handleError((e) => AdapterException(_name, e.toString()));
   }
 
   @override

@@ -61,7 +61,6 @@ class Blockbook extends Adapter {
   }
 
   // TODO add retryStream
-  // TODO handle error
   @override
   Stream<Transaction> transactions(address) {
     // skip(1) ignores the subscription success message
@@ -79,7 +78,7 @@ class Blockbook extends Adapter {
 
           return tx;
         })
-        .handleError((e, s) => print('$e,$s'));
+        .handleError((e) => AdapterException(_name, e.toString()));
   }
 
   Block _blockFromJSON(Map<String, dynamic> response) => Block(

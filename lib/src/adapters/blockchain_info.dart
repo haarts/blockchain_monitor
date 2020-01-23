@@ -64,7 +64,6 @@ class BlockchainInfo extends Adapter {
   }
 
   // TODO add retryStream
-  // TODO add exception handling
   @override
   Stream<Transaction> transactions(address) {
     return _inner
@@ -86,7 +85,7 @@ class BlockchainInfo extends Adapter {
         ..outputs = tx['x']['out']
             .map<Output>((output) => _outputFromJSON(output))
             .toList();
-    }).handleError((e, s) => print('$e,$s'));
+    }).handleError((e) => AdapterException(_name, e.toString()));
   }
 
   Output _outputFromJSON(Map<String, dynamic> output) {
