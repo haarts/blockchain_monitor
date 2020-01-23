@@ -15,12 +15,11 @@ class Blockcypher extends Adapter {
     this._inner,
   );
 
-  factory Blockcypher.defaults() {
+  factory Blockcypher.defaults(String token, [Logger logger]) {
     return Blockcypher(
-      Logger(),
-      // TODO: deal with token
+      logger,
       blockcypher.Client(
-        'some token',
+        token: token,
         httpUrl: _defaultHttpUrl,
         websocketUrl: _defaultWsUrl,
       ),
