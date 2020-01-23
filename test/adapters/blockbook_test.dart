@@ -1,35 +1,30 @@
+import 'dart:convert';
 import 'dart:io';
+
 import 'package:blockbook/blockbook.dart' as blockbook;
 import 'package:logger/logger.dart';
 import 'package:test/test.dart';
-import 'package:mock_web_server/mock_web_server.dart';
+import 'package:mockito/mockito.dart';
 
 import 'package:blockchain_monitor/blockchain_monitor.dart';
 
+class MockBlockbook extends Mock implements blockbook.Blockbook {}
+
 void main() {
-  MockWebServer server;
-  setUp(() async {
-    server = MockWebServer();
-    await server.start();
-  });
-
-  tearDown(() async {
-    server.shutdown();
-  });
-
   group('blocks()', () {
     test('happy path', () async {
-      var subscriptionSuccess = '{"id":"0","data":{"subscribed":true}}';
-      var newBlock =
-          '{"id":"1","data":{"height":611099,"hash":"00000000000000000010657f651f9a65814a3ba731ea997304ebcd6d9cf150eb"}}';
-      server.messageGenerator = (sink) {
-        sink.add(subscriptionSuccess);
-        sink.add(newBlock);
-      };
-      var client =
-          blockbook.Blockbook('', 'ws://${server.host}:${server.port}/ws');
+      var subscriptionSuccess =
+          json.decode('{"id":"0","data":{"subscribed":true}}');
+      var newBlock = json.decode(
+          '{"id":"1","data":{"height":611099,"hash":"00000000000000000010657f651f9a65814a3ba731ea997304ebcd6d9cf150eb"}}');
 
-      await Blockbook(Logger(), client).blocks().listen(expectAsync1((block) {
+      var mock = MockBlockbook();
+      when(mock.subscribeNewBlock()).thenAnswer((_) => Stream.fromIterable([
+            subscriptionSuccess,
+            newBlock,
+          ]));
+
+      await Blockbook(Logger(), mock).blocks().listen(expectAsync1((block) {
         expect(block.height, 611099);
       }));
     });
@@ -38,19 +33,18 @@ void main() {
   group('transactions()', () {
     test('happy path', () async {
       var prefix = Directory.current.path.endsWith('test') ? '' : 'test/';
-      var subscriptionMessage = '{"id":"0","data":{"subscribed":true}}';
-      var tx =
-          File('${prefix}files/ws_subscribeAddresses.json').readAsStringSync();
-      server.messageGenerator = (sink) async {
-        await Future.delayed(
-            Duration(seconds: 1), () => sink.add(subscriptionMessage));
-        await Future.delayed(Duration(seconds: 1), () => sink.add(tx));
-      };
+      var subscriptionMessage =
+          json.decode('{"id":"0","data":{"subscribed":true}}');
+      var tx = json.decode(
+          File('${prefix}files/ws_subscribeAddresses.json').readAsStringSync());
 
-      var client =
-          blockbook.Blockbook('', 'ws://${server.host}:${server.port}/ws');
+      var mock = MockBlockbook();
+      when(mock.subscribeAddresses(any)).thenAnswer((_) => Stream.fromIterable([
+            subscriptionMessage,
+            tx,
+          ]));
 
-      await Blockbook(Logger(), client)
+      await Blockbook(Logger(), mock)
           .transactions('3MSy6m8gqSjJ3maAXT2d2XbjN1Z85h8R5E')
           .listen(expectAsync1((transaction) {
         expect(transaction.txHash,
@@ -61,11 +55,14 @@ void main() {
 
   group('confirmations()', () {
     test('return confirmations', () async {
-      server
-        ..enqueue(body: '{"blockHeight": 100}')
-        ..enqueue(body: '{"blockbook": {"bestHeight": 100}}');
+      var mock = MockBlockbook();
+      when(mock.transaction(any))
+          .thenAnswer((_) => Future.value({'blockHeight': 100}));
+      when(mock.status()).thenAnswer((_) => Future.value({
+            'blockbook': {'bestHeight': 100}
+          }));
 
-      var monitor = Blockbook(Logger(), blockbook.Blockbook(server.url, ''));
+      var monitor = Blockbook(Logger(), mock);
 
       monitor.confirmations('some-hash').listen(expectAsync1((confirmations) {
         expect(confirmations, 1);
@@ -73,11 +70,14 @@ void main() {
     });
 
     test('throws an exception when Blockbook returns one', () async {
-      server
-        ..enqueue(body: '{"error": "some reason"}')
-        ..enqueue(body: '{"blockbook": {"bestHeight": 100}}');
+      var mock = MockBlockbook();
+      when(mock.transaction(any))
+          .thenAnswer((_) => Future.value({'error': 'some reason'}));
+      when(mock.status()).thenAnswer((_) => Future.value({
+            'blockbook': {'bestHeight': 100}
+          }));
 
-      var monitor = Blockbook(Logger(), blockbook.Blockbook(server.url, ''));
+      var monitor = Blockbook(Logger(), mock);
       expect(
         monitor.confirmations('some-hash'),
         emitsError(TypeMatcher<AdapterException>()),
