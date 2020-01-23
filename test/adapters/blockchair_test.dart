@@ -29,8 +29,9 @@ void main() {
         mock,
       );
 
-      var firstBlock = await monitor.blocks().first;
-      expect(firstBlock.height, 612053);
+      monitor.blocks().listen(expectAsync1((block) {
+        expect(block.height, 612053);
+      }));
     });
   });
 
