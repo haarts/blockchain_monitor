@@ -151,10 +151,14 @@ class Blockchair extends Adapter {
         maxAttempts: 3,
         maxDelay: const Duration(seconds: 3),
       );
-      return response['data'][txHash]['transaction']['block_id'] ?? 0;
+      var blockHeight = response['data'][txHash]['transaction']['block_id'];
+      if(blockHeight == null || blockHeight < 0) {
+        return 0;
+      }
+      return blockHeight;
     } on FormatException catch (e) {
       throw AdapterException(
-          'Blockchair', 'fetching tx height of $txHash, exception: $e');
+          _name, 'fetching tx height of $txHash, exception: $e');
     }
   }
 }
