@@ -84,21 +84,21 @@ class Blockchair extends Adapter {
     }
   }
 
-  Future<Block> _queryCurrentBlock(int lastBlockHeight) async {
+  Future<Block> _queryCurrentBlock(int previousBlockHeight) async {
     var response = await _inner.stats();
-    if (lastBlockHeight == response['data']['blocks'] - 1) {
+    var currentBlockHeight = response['data']['blocks'] - 1;
+    if (previousBlockHeight == currentBlockHeight) {
       _logger?.d({
         'msg': 'Block height unchanged for $_name',
-        'height': lastBlockHeight,
+        'height': previousBlockHeight,
         'name': _name,
       });
 
       return Future.value(null);
     }
 
-    lastBlockHeight = response['data']['blocks'] - 1;
-    var blockResponse = (await _inner.block(lastBlockHeight))['data']
-        ['$lastBlockHeight']['block'];
+    var blockResponse = (await _inner.block(currentBlockHeight))['data']
+        ['$currentBlockHeight']['block'];
 
     var hash = blockResponse['hash'];
     var height = blockResponse['id'];
@@ -152,7 +152,7 @@ class Blockchair extends Adapter {
         maxDelay: const Duration(seconds: 3),
       );
       var blockHeight = response['data'][txHash]['transaction']['block_id'];
-      if(blockHeight == null || blockHeight < 0) {
+      if (blockHeight == null || blockHeight < 0) {
         return 0;
       }
       return blockHeight;
