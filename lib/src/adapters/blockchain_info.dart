@@ -44,7 +44,7 @@ class BlockchainInfo extends Adapter {
         height: height,
         hash: hash,
       );
-    });
+    }).handleError((e) => AdapterException(_name, e.toString()));
   }
 
   @override

@@ -91,7 +91,7 @@ class Blockcypher extends Adapter {
         hash: hash,
         height: height,
       );
-    });
+    }).handleError((e) => AdapterException(_name, e.toString()));
   }
 
   Input _inputFromJson(Map<String, dynamic> input) {

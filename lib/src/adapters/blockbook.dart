@@ -41,7 +41,7 @@ class Blockbook extends Adapter {
       });
 
       return block;
-    }).handleError((e, s) => print('$e,$s'));
+    }).handleError((e) => AdapterException(_name, e.toString()));
   }
 
   @override

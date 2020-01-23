@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:blockchair/blockchair.dart' as blockchair;
 import 'package:logger/logger.dart';
 import 'package:retry/retry.dart';
@@ -27,26 +26,15 @@ class Blockchair extends Adapter {
   Stream<Block> blocks() async* {
     int lastBlockHeight;
     while (true) {
-      var response = await _inner.stats();
-      if (lastBlockHeight != response['data']['blocks'] - 1) {
-        lastBlockHeight = response['data']['blocks'] - 1;
-        var blockResponse = (await _inner.block(lastBlockHeight))['data']
-            ['$lastBlockHeight']['block'];
-
-        var hash = blockResponse['hash'];
-        var height = blockResponse['id'];
-
-        _logger?.v({
-          'msg': 'New block found for $_name',
-          'hash': hash,
-          'height': height,
-          'name': _name,
-        });
-
-        yield Block(
-          hash: hash,
-          height: height,
-        );
+      var block;
+      try {
+        block = await _queryCurrentBlock(lastBlockHeight);
+      } catch (e) {
+        throw AdapterException(_name, e.toString());
+      }
+      if (block != null) {
+        lastBlockHeight = block.height;
+        yield block;
       }
       await Future.delayed(const Duration(seconds: 5));
     }
@@ -94,6 +82,38 @@ class Blockchair extends Adapter {
 
       await Future.delayed(const Duration(seconds: 5));
     }
+  }
+
+  Future<Block> _queryCurrentBlock(int lastBlockHeight) async {
+    var response = await _inner.stats();
+    if (lastBlockHeight == response['data']['blocks'] - 1) {
+      _logger?.d({
+        'msg': 'Block height unchanged for $_name',
+        'height': lastBlockHeight,
+        'name': _name,
+      });
+
+      return Future.value(null);
+    }
+
+    lastBlockHeight = response['data']['blocks'] - 1;
+    var blockResponse = (await _inner.block(lastBlockHeight))['data']
+        ['$lastBlockHeight']['block'];
+
+    var hash = blockResponse['hash'];
+    var height = blockResponse['id'];
+
+    _logger?.v({
+      'msg': 'New block found for $_name',
+      'hash': hash,
+      'height': height,
+      'name': _name,
+    });
+
+    return Block(
+      hash: hash,
+      height: height,
+    );
   }
 
   Future<Transaction> _newTransaction(String txHash) async {
