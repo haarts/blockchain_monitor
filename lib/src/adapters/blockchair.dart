@@ -24,7 +24,7 @@ class Blockchair extends Adapter {
 
   @override
   Stream<Block> blocks() async* {
-    int lastBlockHeight;
+    int lastBlockHeight = (await _inner.stats())['data']['blocks'];
     while (true) {
       var block;
       try {
