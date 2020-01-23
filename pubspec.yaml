@@ -1,7 +1,7 @@
 name: blockchain_monitor
 description: A high level blockchain monitoring library.
 version: 0.1.0
-homepage: https://github.com/inacta/blockchain_monitor
+homepage: https://github.com/inapay/blockchain_monitor
 
 environment:
   sdk: '>=2.7.0 <3.0.0'
