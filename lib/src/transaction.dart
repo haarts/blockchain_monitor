@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 class Transaction {
   Transaction({this.inputs});
@@ -9,8 +10,9 @@ class Transaction {
   List<Input> inputs;
   List<Output> outputs;
 
-  bool get isRBF => _extractLowestSequence() < 1;
-  int _extractLowestSequence() => 1;
+  bool get isRBF => _extractLowestSequence() < 0xffffffff - 1;
+  int _extractLowestSequence() =>
+      inputs.map((i) => i.sequence).fold(0xffffffff, min);
 
   @override
   String toString() => json.encode(toJson());
