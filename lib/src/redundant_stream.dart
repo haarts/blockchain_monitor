@@ -30,6 +30,7 @@ class Unique<T> extends StreamTransformerBase<T, T> {
 
   final int memory;
 
+  @override
   Stream<T> bind(Stream<T> stream) => Stream<T>.eventTransformed(
       stream, (sink) => _UniqueSink<T>(sink, memory: memory));
 }
@@ -55,6 +56,9 @@ class _UniqueSink<T> implements EventSink<T> {
     }
   }
 
+  @override
   void addError(e, [st]) => _output.addError(e, st);
+
+  @override
   void close() => _output.close();
 }
