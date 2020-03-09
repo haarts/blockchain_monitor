@@ -50,7 +50,7 @@ class Blockbook extends Adapter {
       });
 
       return block;
-    }).handleError((e) => AdapterException(_name, e.toString()));
+    }).handleError((e, s) => throw AdapterException(_name, e.toString(), s));
   }
 
   @override
@@ -69,11 +69,9 @@ class Blockbook extends Adapter {
     });
   }
 
-  // TODO add retryStream
   @override
   Stream<Transaction> transactions(address) {
     // skip(1) ignores the subscription success message
-    // TODO: add retryStream
     return _inner
         .subscribeAddresses([address])
         .skip(1)
@@ -83,11 +81,12 @@ class Blockbook extends Adapter {
             'msg': 'New transaction for $address on $_name',
             'address': address,
             'txHash': tx.txHash,
+            'name': _name,
           });
 
           return tx;
         })
-        .handleError((e) => AdapterException(_name, e.toString()));
+        .handleError((e, s) => throw AdapterException(_name, e.toString(), s));
   }
 
   Block _blockFromJSON(Map<String, dynamic> response) => Block(
@@ -110,19 +109,23 @@ class Blockbook extends Adapter {
     return Input()
       ..txHash = response['txid']
       ..sequence = response['sequence']
-      ..value = response['value'];
+      ..value = int.parse(response['value']);
   }
 
   Output _outputFromJSON(Map<String, dynamic> response) {
     return Output()
       ..addresses = response['addresses'].cast<String>()
-      ..value = response['value'];
+      ..value = int.parse(response['value']);
   }
 
   Future<int> _bestHeight() async {
     var response = await retry(_inner.status);
     if (response.containsKey('error')) {
-      throw AdapterException('Blockbook', response.toString());
+      throw AdapterException(
+        'Blockbook',
+        response.toString(),
+        StackTrace.current,
+      );
     }
 
     return response['blockbook']['bestHeight'];
@@ -131,7 +134,11 @@ class Blockbook extends Adapter {
   Future<int> _txHeight(String txHash) async {
     var response = await retry(() => _inner.transaction(txHash));
     if (response.containsKey('error')) {
-      throw AdapterException('Blockbook', response.toString());
+      throw AdapterException(
+        'Blockbook',
+        response.toString(),
+        StackTrace.current,
+      );
     }
 
     return response['blockHeight'] ?? 0;

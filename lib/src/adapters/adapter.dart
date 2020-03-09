@@ -18,9 +18,10 @@ abstract class Adapter {
 }
 
 class AdapterException implements Exception {
-  AdapterException(this.name, this.reason);
+  AdapterException(this.name, this.reason, this.stackTrace);
   final String name;
   final String reason;
+  final StackTrace stackTrace;
 
   @override
   String toString() => 'An Exception occured in the $name adapter: $reason';

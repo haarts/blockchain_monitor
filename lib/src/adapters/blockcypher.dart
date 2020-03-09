@@ -87,7 +87,7 @@ class Blockcypher extends Adapter {
         ..outputs = tx['outputs']
             .map<Output>((output) => _outputFromJson(output))
             .toList();
-    }).handleError((e) => AdapterException(_name, e.toString()));
+    }).handleError((e, s) => throw AdapterException(_name, e.toString(), s));
   }
 
   @override
@@ -107,7 +107,7 @@ class Blockcypher extends Adapter {
         hash: hash,
         height: height,
       );
-    }).handleError((e) => AdapterException(_name, e.toString()));
+    }).handleError((e, s) => throw AdapterException(_name, e.toString(), s));
   }
 
   Input _inputFromJson(Map<String, dynamic> input) {
@@ -127,7 +127,11 @@ class Blockcypher extends Adapter {
     var response = await retry(() => _inner.transaction(txHash));
     var message = json.decode(response);
     if (message.containsKey('error')) {
-      throw AdapterException('Blockcypher', message.toString());
+      throw AdapterException(
+        'Blockcypher',
+        message.toString(),
+        StackTrace.current,
+      );
     }
     // Blockcypher returns -1 for unconfirmed transactions
     return max(message['block_height'], 0);

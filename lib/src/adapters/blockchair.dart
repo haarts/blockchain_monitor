@@ -38,8 +38,8 @@ class Blockchair extends Adapter {
       var block;
       try {
         block = await _queryCurrentBlock(lastBlockHeight);
-      } catch (e) {
-        throw AdapterException(_name, e.toString());
+      } catch (e, s) {
+        throw AdapterException(_name, e.toString(), s);
       }
       if (block != null) {
         lastBlockHeight = block.height;
@@ -165,9 +165,9 @@ class Blockchair extends Adapter {
         return 0;
       }
       return blockHeight;
-    } on FormatException catch (e) {
+    } on FormatException catch (e, s) {
       throw AdapterException(
-          _name, 'fetching tx height of $txHash, exception: $e');
+          _name, 'fetching tx height of $txHash, exception: $e', s);
     }
   }
 }

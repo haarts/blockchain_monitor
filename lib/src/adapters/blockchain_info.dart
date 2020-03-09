@@ -53,7 +53,7 @@ class BlockchainInfo extends Adapter {
         height: height,
         hash: hash,
       );
-    }).handleError((e) => AdapterException(_name, e.toString()));
+    }).handleError((e, s) => throw AdapterException(_name, e.toString(), s));
   }
 
   @override
@@ -94,7 +94,7 @@ class BlockchainInfo extends Adapter {
         ..outputs = tx['x']['out']
             .map<Output>((output) => _outputFromJSON(output))
             .toList();
-    }).handleError((e) => AdapterException(_name, e.toString()));
+    }).handleError((e, s) => throw AdapterException(_name, e.toString(), s));
   }
 
   Output _outputFromJSON(Map<String, dynamic> output) {
