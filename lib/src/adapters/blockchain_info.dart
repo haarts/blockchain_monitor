@@ -24,7 +24,7 @@ class BlockchainInfo extends Adapter {
     return BlockchainInfo(
       logger,
       Client(
-          url: 'wss://ws.blockchain.info/testnet3/inv',
+          url: 'https://testnet.blockchain.info/',
           webSocketUrl: 'wss://ws.blockchain.info/testnet3/inv'),
     );
   }
