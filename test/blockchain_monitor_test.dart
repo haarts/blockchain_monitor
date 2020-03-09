@@ -1,6 +1,8 @@
 import 'package:blockchain_monitor/blockchain_monitor.dart';
 import 'package:test/test.dart';
 
+import '../lib/src/redundant_stream.dart';
+
 class TestAdapter extends Adapter {
   @override
   Stream<Block> blocks() async* {
@@ -46,12 +48,25 @@ void main() {
     }));
   });
 
-  test('de-duplicate events', () async {
-    var monitor = Monitor([TestAdapter(), TestAdapter()]);
-    monitor.confirmations('some-txhash').listen(expectAsync1((confirmations) {
-          expect(confirmations, 0);
-        }, count: 1));
-  },
-      skip:
-          'this is broken, I thought I was testing RedundantStream here but I am not');
+  test('unique', () async {
+    Stream<int> someRepeatingStream() async* {
+      yield 0;
+      yield 0;
+      yield 1;
+      yield 2;
+      yield 2;
+    }
+
+    expect(
+      someRepeatingStream().transform(Unique()),
+      emitsInOrder(
+        [
+          0,
+          1,
+          2,
+          emitsDone,
+        ],
+      ),
+    );
+  });
 }
