@@ -1,6 +1,6 @@
 name: blockchain_monitor
 description: A high level blockchain monitoring library.
-version: 0.1.2
+version: 0.1.3
 homepage: https://github.com/inapay/blockchain_monitor
 
 environment:
