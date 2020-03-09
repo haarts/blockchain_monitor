@@ -13,10 +13,19 @@ class BlockchainInfo extends Adapter {
     this._inner,
   );
 
-  factory BlockchainInfo.defaults([Logger logger]) {
+  factory BlockchainInfo.mainnet([Logger logger]) {
     return BlockchainInfo(
       logger,
       Client(),
+    );
+  }
+
+  factory BlockchainInfo.testnet([Logger logger]) {
+    return BlockchainInfo(
+      logger,
+      Client(
+          url: 'wss://ws.blockchain.info/testnet3/inv',
+          webSocketUrl: 'wss://ws.blockchain.info/testnet3/inv'),
     );
   }
 

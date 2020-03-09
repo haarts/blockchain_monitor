@@ -12,15 +12,24 @@ class Blockbook extends Adapter {
     this._inner,
   );
 
-  factory Blockbook.defaults([Logger logger]) {
+  factory Blockbook.mainnet([Logger logger]) {
     return Blockbook(
       logger,
-      blockbook.Blockbook(_defaultUrl, _defaultWebsocketUrl),
+      blockbook.Blockbook(_mainnetUrl, _mainnetWebsocketUrl),
     );
   }
 
-  static const String _defaultUrl = 'https://btc1.trezor.io';
-  static const String _defaultWebsocketUrl = 'wss://btc1.trezor.io/websocket';
+  factory Blockbook.testnet([Logger logger]) {
+    return Blockbook(
+      logger,
+      blockbook.Blockbook(_testnetUrl, _testnetWebsocketUrl),
+    );
+  }
+
+  static const String _mainnetUrl = 'https://btc1.trezor.io';
+  static const String _mainnetWebsocketUrl = 'wss://btc1.trezor.io/websocket';
+  static const String _testnetUrl = 'https://tbtc2.trezor.io';
+  static const String _testnetWebsocketUrl = 'wss://tbtc2.trezor.io/websocket';
   static const String _name = 'blockbook';
 
   Logger _logger;

@@ -11,6 +11,6 @@ void main(List<String> args) {
       printer: LogfmtPrinter(),
     ),
   );
-  var tx = args[1];
-  monitor.confirmations(tx).listen(print);
+  var address = args[1];
+  monitor.address(address).listen(print);
 }

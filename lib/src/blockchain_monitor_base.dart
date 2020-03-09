@@ -11,12 +11,21 @@ class Monitor {
 
   List<Adapter> _adapters;
 
-  factory Monitor.defaults({String blockcypherToken, Logger logger}) {
+  factory Monitor.mainnet({String blockcypherToken, Logger logger}) {
     return Monitor([
-      Blockbook.defaults(logger),
-      Blockchair.defaults(logger),
-      Blockcypher.defaults(blockcypherToken, logger),
-      BlockchainInfo.defaults(logger),
+      Blockbook.mainnet(logger),
+      Blockchair.mainnet(logger),
+      Blockcypher.mainnet(blockcypherToken, logger),
+      BlockchainInfo.mainnet(logger),
+    ]);
+  }
+
+  factory Monitor.testnet({String blockcypherToken, Logger logger}) {
+    return Monitor([
+      Blockbook.testnet(logger),
+      Blockchair.testnet(logger),
+      Blockcypher.testnet(blockcypherToken, logger),
+      BlockchainInfo.testnet(logger),
     ]);
   }
 

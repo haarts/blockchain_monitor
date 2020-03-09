@@ -9,14 +9,23 @@ import '../transaction.dart';
 class Blockchair extends Adapter {
   Blockchair(this._logger, this._inner);
 
-  factory Blockchair.defaults([Logger logger]) {
+  factory Blockchair.mainnet([Logger logger]) {
     return Blockchair(
       logger,
-      blockchair.Blockchair(_defaultUrl),
+      blockchair.Blockchair(_mainnetUrl),
     );
   }
 
-  static const String _defaultUrl = 'https://api.blockchair.com/bitcoin/';
+  factory Blockchair.testnet([Logger logger]) {
+    return Blockchair(
+      logger,
+      blockchair.Blockchair(_testnetUrl),
+    );
+  }
+
+  static const String _mainnetUrl = 'https://api.blockchair.com/bitcoin/';
+  static const String _testnetUrl =
+      'https://api.blockchair.com/bitcoin/testnet/';
   static const String _name = 'Blockchair';
 
   Logger _logger;

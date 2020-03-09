@@ -15,21 +15,38 @@ class Blockcypher extends Adapter {
     this._inner,
   );
 
-  factory Blockcypher.defaults(String token, [Logger logger]) {
+  factory Blockcypher.mainnet(String token, [Logger logger]) {
     return Blockcypher(
       logger,
       blockcypher.Client(
         token: token,
-        httpUrl: _defaultHttpUrl,
-        websocketUrl: _defaultWsUrl,
+        httpUrl: _mainnetHttpUrl,
+        websocketUrl: _mainnetWsUrl,
       ),
     );
   }
 
-  static const String _defaultWsUrl =
+  factory Blockcypher.testnet(String token, [Logger logger]) {
+    return Blockcypher(
+      logger,
+      blockcypher.Client(
+        token: token,
+        httpUrl: _testnetHttpUrl,
+        websocketUrl: _testnetWsUrl,
+      ),
+    );
+  }
+
+  static const String _mainnetWsUrl =
       'wss://socket.blockcypher.com/v1/btc/main';
-  static const String _defaultHttpUrl =
+  static const String _mainnetHttpUrl =
       'https://api.blockcypher.com/v1/btc/main';
+
+  static const String _testnetWsUrl =
+      'wss://socket.blockcypher.com/v1/btc/test3';
+  static const String _testnetHttpUrl =
+      'https://api.blockcypher.com/v1/btc/test3';
+
   static const String _name = 'blockcypher';
 
   Logger _logger;
