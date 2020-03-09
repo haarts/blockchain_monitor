@@ -1,3 +1,6 @@
+## 0.1.2
+- Add testnet
+
 ## 0.1.1
 - add isRBF call
 
