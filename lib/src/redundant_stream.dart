@@ -13,7 +13,8 @@ class AllStreamsFailed implements Exception {
 class RedundantStream<T> {
   RedundantStream(Iterable<Stream<T>> streams) {
     _active = streams.length;
-    stream = StreamGroup.merge(streams).transform(Unique()).handleError((_) {
+    stream =
+        StreamGroup.merge(streams).transform(Unique()).handleError((_, __) {
       _active--;
       if (_active == 0) {
         throw AllStreamsFailed(streams.length);
