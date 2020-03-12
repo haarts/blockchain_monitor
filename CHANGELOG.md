@@ -1,5 +1,9 @@
+## 0.1.5
+- Fix bug in Blockbook which was unable to deal with mempool txs
+
 ## 0.1.4
 - Fix bug in Blockchair which was unable to deal with mempool txs
+ 
 ## 0.1.3
 - Fix major bug in Blockbook
 
