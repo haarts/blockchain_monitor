@@ -24,7 +24,7 @@ class AdapterException implements Exception {
   final StackTrace stackTrace;
 
   @override
-  String toString() => 'An Exception occured in the $name adapter: $reason';
+  String toString() => 'An Exception occured in the $name adapter: $reason, $stackTrace';
 }
 
 Stream<int> longPollConfirmations(
