@@ -141,6 +141,10 @@ class Blockbook extends Adapter {
       );
     }
 
-    return response['blockHeight'] ?? 0;
+    var blockHeight = response['blockHeight'];
+    if (blockHeight < 0) {
+      return 0;
+    }
+    return blockHeight;
   }
 }

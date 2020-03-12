@@ -69,6 +69,22 @@ void main() {
       }));
     });
 
+    test('return 0 when tx is in mempool', () async {
+      var mock = MockBlockbook();
+      when(mock.transaction(any))
+          .thenAnswer((_) => Future.value({'blockHeight': -1}));
+      when(mock.status()).thenAnswer((_) => Future.value({
+            'blockbook': {'bestHeight': 100}
+          }));
+
+      var monitor = Blockbook(Logger(), mock);
+
+      monitor.confirmations('some-hash').listen(expectAsync1((confirmations) {
+        expect(confirmations, 0);
+      }));
+
+    });
+
     test('throws an exception when Blockbook returns one', () async {
       var mock = MockBlockbook();
       when(mock.transaction(any))
