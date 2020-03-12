@@ -109,6 +109,21 @@ void main() {
       }));
     });
 
+    test('return 0 when tx is still in mempool', () async {
+      var mock = MockBlockchair();
+      when(mock.transaction('some-hash')).thenAnswer(
+        (_) => Future.value({'data': []}),
+      );
+      var monitor = Blockchair(
+        Logger(),
+        mock,
+      );
+
+      monitor.confirmations('some-hash').listen(expectAsync1((confirmations) {
+        expect(confirmations, 0);
+      }));
+    });
+
     test('throws an exception when Blockchair returns one', () async {
       var mock = MockBlockchair();
       when(mock.transaction('some-hash')).thenThrow(FormatException());

@@ -160,6 +160,11 @@ class Blockchair extends Adapter {
         maxAttempts: 3,
         maxDelay: const Duration(seconds: 3),
       );
+
+      if(response['data'].isEmpty) {
+        return 0;
+      }
+
       var blockHeight = response['data'][txHash]['transaction']['block_id'];
       if (blockHeight == null || blockHeight < 0) {
         return 0;
