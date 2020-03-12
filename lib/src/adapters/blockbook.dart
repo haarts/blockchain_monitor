@@ -109,13 +109,13 @@ class Blockbook extends Adapter {
     return Input()
       ..txHash = response['txid']
       ..sequence = response['sequence']
-      ..value = int.parse(response['value']);
+      ..value = int.parse(response['value'].toString());
   }
 
   Output _outputFromJSON(Map<String, dynamic> response) {
     return Output()
       ..addresses = response['addresses'].cast<String>()
-      ..value = int.parse(response['value']);
+      ..value = int.parse(response['value'].toString());
   }
 
   Future<int> _bestHeight() async {
