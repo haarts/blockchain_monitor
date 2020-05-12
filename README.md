@@ -1,4 +1,9 @@
-A high level blockchain monitoring library.
+# A high level blockchain monitoring library.
+
+[![pub package](https://img.shields.io/pub/v/blockchain_monitor.svg)](https://pub.dartlang.org/packages/blockchain_monitor)
+[![GH Actions](https://github.com/inapay/blockchain_monitor/workflows/dart/badge.svg)](https://github.com/inapay/blockchain_monitor/actions)
+
+
 
 This library allows you to monitor blockchain events:
 - new block
