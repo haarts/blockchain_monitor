@@ -1,3 +1,6 @@
+## 0.1.6
+- Bump logger dependency
+
 ## 0.1.5
 - Fix bug in Blockbook which was unable to deal with mempool txs
 
