@@ -24,7 +24,7 @@ void main() {
             newBlock,
           ]));
 
-      await Blockbook(Logger(), mock).blocks().listen(expectAsync1((block) {
+      Blockbook(Logger(), mock).blocks().listen(expectAsync1((block) {
         expect(block.height, 611099);
       }));
     });
@@ -44,7 +44,7 @@ void main() {
             tx,
           ]));
 
-      await Blockbook(Logger(), mock)
+      Blockbook(Logger(), mock)
           .transactions('3MSy6m8gqSjJ3maAXT2d2XbjN1Z85h8R5E')
           .listen(expectAsync1((transaction) {
         expect(transaction.txHash,
@@ -82,7 +82,6 @@ void main() {
       monitor.confirmations('some-hash').listen(expectAsync1((confirmations) {
         expect(confirmations, 0);
       }));
-
     });
 
     test('throws an exception when Blockbook returns one', () async {

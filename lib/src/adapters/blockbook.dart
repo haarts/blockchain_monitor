@@ -2,9 +2,9 @@ import 'package:blockbook/blockbook.dart' as blockbook;
 import 'package:logger/logger.dart';
 import 'package:retry/retry.dart';
 
-import 'adapter.dart';
 import '../block.dart';
 import '../transaction.dart';
+import 'adapter.dart';
 
 class Blockbook extends Adapter {
   Blockbook(
@@ -98,21 +98,18 @@ class Blockbook extends Adapter {
     return Transaction()
       ..txHash = response['txid']
       ..blockHeight = response['blockHeight']
-      ..inputs =
-          response['vin'].map<Input>((input) => _inputFromJSON(input)).toList()
-      ..outputs = response['vout']
-          .map<Output>((output) => _outputFromJSON(output))
-          .toList();
+      ..inputs = response['vin'].map<Input>(_inputFromJSON).toList()
+      ..outputs = response['vout'].map<Output>(_outputFromJSON).toList();
   }
 
-  Input _inputFromJSON(Map<String, dynamic> response) {
+  Input _inputFromJSON(response) {
     return Input()
       ..txHash = response['txid']
       ..sequence = response['sequence']
       ..value = int.parse(response['value'].toString());
   }
 
-  Output _outputFromJSON(Map<String, dynamic> response) {
+  Output _outputFromJSON(response) {
     return Output()
       ..addresses = response['addresses'].cast<String>()
       ..value = int.parse(response['value'].toString());

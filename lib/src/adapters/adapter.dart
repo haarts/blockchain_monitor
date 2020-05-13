@@ -2,9 +2,9 @@ import '../block.dart';
 import '../transaction.dart';
 
 export 'blockbook.dart';
+export 'blockchain_info.dart';
 export 'blockchair.dart';
 export 'blockcypher.dart';
-export 'blockchain_info.dart';
 
 abstract class Adapter {
   /// Stream of blocks as they are mined
@@ -24,7 +24,8 @@ class AdapterException implements Exception {
   final StackTrace stackTrace;
 
   @override
-  String toString() => 'An Exception occured in the $name adapter: $reason, $stackTrace';
+  String toString() =>
+      'An Exception occured in the $name adapter: $reason, $stackTrace';
 }
 
 Stream<int> longPollConfirmations(

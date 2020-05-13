@@ -2,9 +2,9 @@ import 'package:blockchair/blockchair.dart' as blockchair;
 import 'package:logger/logger.dart';
 import 'package:retry/retry.dart';
 
-import 'adapter.dart';
 import '../block.dart';
 import '../transaction.dart';
+import 'adapter.dart';
 
 class Blockchair extends Adapter {
   Blockchair(this._logger, this._inner);
@@ -78,7 +78,7 @@ class Blockchair extends Adapter {
           await Future.wait(txs.difference(seenTxHashes).map((tx) {
         seenTxHashes.add(tx);
         return tx;
-      }).map((tx) => _newTransaction(tx)));
+      }).map(_newTransaction));
 
       for (var tx in transactions) {
         _logger?.v({
@@ -161,7 +161,7 @@ class Blockchair extends Adapter {
         maxDelay: const Duration(seconds: 3),
       );
 
-      if(response['data'].isEmpty) {
+      if (response['data'].isEmpty) {
         return 0;
       }
 

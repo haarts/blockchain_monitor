@@ -3,9 +3,9 @@ import 'package:blockchain_info/blockchain_info.dart';
 import 'package:logger/logger.dart';
 import 'package:retry/retry.dart';
 
-import 'adapter.dart';
 import '../block.dart';
 import '../transaction.dart';
+import 'adapter.dart';
 
 class BlockchainInfo extends Adapter {
   BlockchainInfo(
@@ -88,23 +88,19 @@ class BlockchainInfo extends Adapter {
         ..txHash = tx['x']['hash']
         ..blockHeight =
             (await _inner.getTransaction(tx['x']['hash']))['block_height']
-        ..inputs = tx['x']['inputs']
-            .map<Input>((input) => _inputFromJSON(input))
-            .toList()
-        ..outputs = tx['x']['out']
-            .map<Output>((output) => _outputFromJSON(output))
-            .toList();
+        ..inputs = tx['x']['inputs'].map<Input>(_inputFromJSON).toList()
+        ..outputs = tx['x']['out'].map<Output>(_outputFromJSON).toList();
     }).handleError((e, s) => throw AdapterException(_name, e.toString(), s));
   }
 
-  Output _outputFromJSON(Map<String, dynamic> output) {
+  Output _outputFromJSON(output) {
     return Output()
       ..addresses = [output['addr']]
       ..value = output['value'];
   }
 
   // TODO: fix missing txHash (should it be a txHash at all?)
-  Input _inputFromJSON(Map<String, dynamic> input) {
+  Input _inputFromJSON(input) {
     return Input()
       ..sequence = input['sequence']
       ..value = input['prev_out']['value'];

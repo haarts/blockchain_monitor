@@ -5,9 +5,9 @@ import 'package:blockcypher/blockcypher.dart' as blockcypher;
 import 'package:logger/logger.dart';
 import 'package:retry/retry.dart';
 
-import 'adapter.dart';
 import '../block.dart';
 import '../transaction.dart';
+import 'adapter.dart';
 
 class Blockcypher extends Adapter {
   Blockcypher(
@@ -82,11 +82,8 @@ class Blockcypher extends Adapter {
       return Transaction()
         ..txHash = tx['hash']
         ..blockHeight = 0
-        ..inputs =
-            tx['inputs'].map<Input>((input) => _inputFromJson(input)).toList()
-        ..outputs = tx['outputs']
-            .map<Output>((output) => _outputFromJson(output))
-            .toList();
+        ..inputs = tx['inputs'].map<Input>(_inputFromJson).toList()
+        ..outputs = tx['outputs'].map<Output>(_outputFromJson).toList();
     }).handleError((e, s) => throw AdapterException(_name, e.toString(), s));
   }
 
@@ -110,14 +107,14 @@ class Blockcypher extends Adapter {
     }).handleError((e, s) => throw AdapterException(_name, e.toString(), s));
   }
 
-  Input _inputFromJson(Map<String, dynamic> input) {
+  Input _inputFromJson(input) {
     return Input()
       ..sequence = input['sequence']
       ..value = input['output_value']
       ..txHash = input['prev_hash'];
   }
 
-  Output _outputFromJson(Map<String, dynamic> output) {
+  Output _outputFromJson(output) {
     return Output()
       ..addresses = output['addresses'].cast<String>()
       ..value = output['value'];

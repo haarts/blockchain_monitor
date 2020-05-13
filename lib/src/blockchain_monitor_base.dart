@@ -1,15 +1,13 @@
 import 'package:logger/logger.dart';
 
-import 'redundant_stream.dart';
-import 'block.dart';
-import 'transaction.dart';
 import 'adapters/adapter.dart';
+import 'block.dart';
+import 'redundant_stream.dart';
+import 'transaction.dart';
 
 /// Instantiate this class to obtain a robust blockchain monitor.
 class Monitor {
   Monitor(this._adapters);
-
-  List<Adapter> _adapters;
 
   factory Monitor.mainnet({String blockcypherToken, Logger logger}) {
     return Monitor([
@@ -28,6 +26,8 @@ class Monitor {
       BlockchainInfo.testnet(logger),
     ]);
   }
+
+  List<Adapter> _adapters;
 
   /// Pass an address to be notified of all transactions occuring involving
   /// that address.

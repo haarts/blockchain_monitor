@@ -1,7 +1,6 @@
 import 'package:blockchain_monitor/blockchain_monitor.dart';
+import 'package:blockchain_monitor/src/redundant_stream.dart';
 import 'package:test/test.dart';
-
-import '../lib/src/redundant_stream.dart';
 
 class TestAdapter extends Adapter {
   @override
