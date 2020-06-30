@@ -1,7 +1,8 @@
 name: blockchain_monitor
 description: A high level blockchain monitoring library.
 version: 0.1.6
-homepage: https://github.com/inapay/blockchain_monitor
+author: Harm Aarts <harm@aarts.email>
+homepage: https://github.com/haarts/blockchain_monitor
 
 environment:
   sdk: '>=2.7.0 <3.0.0'
